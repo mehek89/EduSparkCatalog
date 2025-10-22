@@ -2,13 +2,14 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3'  // Name of Maven from Global Tool Configuration
+        maven 'Maven-3'  // name of Maven installation in Jenkins
+        jdk 'JDK21'    // name of JDK installation in Jenkins
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/mehek89/EduSparkCatalog.git', branch: 'main'
+                git branch: 'main', url: 'https://github.com/mehek89/EduSparkCatalog.git'
             }
         }
 
@@ -19,25 +20,23 @@ pipeline {
         }
 
         stage('Deploy') {
-    steps {
-        deploy adapters: [tomcat9(
-            credentialsId: 'tomcat-credentials', // matches Jenkins credentials ID
-            url: 'http://localhost:8081/manager/text',
-            path: '/EduSparkCatalog'
-        )],
-        war: '**/target/EduSparkCatalog.war'
-    }
-}
-
+            steps {
+                deploy adapters: [tomcat9(
+                    credentialsId: 'tomcat-credentials', 
+                    url: 'http://localhost:8081/manager/text',
+                    path: '/EduSparkCatalog'
+                )],
+                war: '**/target/EduSparkCatalog.war'
+            }
         }
     }
 
     post {
         success {
-            echo 'Deployment Successful!'
+            echo 'Build and Deployment Successful!'
         }
         failure {
-            echo 'Deployment Failed!'
+            echo 'Deployment Failed! Check Jenkins and Tomcat logs.'
         }
     }
 }

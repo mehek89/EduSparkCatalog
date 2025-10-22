@@ -1,12 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        
-        TOMCAT_CRED_ID = 'TomcatServer'          // Jenkins credential ID
-        TOMCAT_URL = 'http://localhost:8081/manager/text' // Tomcat manager URL
-        WAR_PATH = '**/target/EduSparkCatalog.war'    // Path to WAR file
-        CONTEXT_PATH = '/EduSparkCatalog'             // Context path in Tomcat
+    tools {
+        maven 'Maven-3.9.9'   // Name from Global Tool Configuration
     }
 
     stages {
@@ -18,28 +14,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat "mvn clean package"
+                
+                 bat 'mvn clean package'  // for Windows agents
             }
         }
 
         stage('Deploy') {
             steps {
                 deploy adapters: [tomcat9x(
-                    url: "${TOMCAT_URL}",
-                    credentialsId: "${TOMCAT_CRED_ID}",
-                    path: "${CONTEXT_PATH}"
+                    url: 'http://localhost:8081/manager/text',
+                    credentialsId: 'TomcatServer',
+                    path: '/EduSparkCatalog'
                 )],
-                war: "${WAR_PATH}"
+                war: '**/target/EduSparkCatalog.war'
             }
-        }
-    }
-
-    post {
-        success {
-            echo " Build and Deployment successful!"
-        }
-        failure {
-            echo " Deployment Failed! Check Jenkins and Tomcat logs."
         }
     }
 }

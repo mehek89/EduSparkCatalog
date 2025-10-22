@@ -7,12 +7,11 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-    steps {
-        git branch: 'main', url: 'https://github.com/mehek89/EduSparkCatalog.git'
-    }
-}
 
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/mehek89/EduSparkCatalog.git'
+            }
         }
 
         stage('Build') {
@@ -23,9 +22,15 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'TomcatServer', path: '', url: 'http://localhost:8081')], 
-                contextPath: '/EduSparkCatalog', war: '**/target/EduSparkCatalog.war'
+                deploy adapters: [tomcat9(
+                    credentialsId: 'TomcatServer',
+                    path: '',
+                    url: 'http://localhost:8080'
+                )],
+                contextPath: '/EduSparkCatalog',
+                war: '**/target/EduSparkCatalog.war'
             }
         }
-    }
-}
+
+    } // End of stages
+} // End of pipeline

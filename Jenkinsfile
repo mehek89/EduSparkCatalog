@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         MAVEN_HOME = tool name: 'Maven-3.9.9', type: 'maven'
-        JAVA_HOME = tool name: 'JDK 21', type: 'jdk'
+        JAVA_HOME = tool name: 'JDK21', type: 'jdk'
         TOMCAT_URL = 'http://localhost:8081/manager/text'
         TOMCAT_USER = 'admin'
         TOMCAT_PASSWORD = 'admin123'

@@ -8,9 +8,11 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/mehek89/EduSparkCatalog.git'
-            }
+    steps {
+        git branch: 'main', url: 'https://github.com/mehek89/EduSparkCatalog.git'
+    }
+}
+
         }
 
         stage('Build') {

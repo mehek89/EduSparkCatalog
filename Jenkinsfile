@@ -2,16 +2,15 @@ pipeline {
     agent any
 
     environment {
-        // ⚙️ Paths to tools
         MAVEN_HOME = "C:\\Program Files\\Maven\\maven-mvnd-1.0.3-windows-amd64\\mvn"
         TOMCAT_URL = "http://localhost:8081/manager/text"
-        DEPLOY_PATH = "/EduSparkCatalog"  // Change if you want another app name
+        DEPLOY_PATH = "/EduSparkCatalog"
         TOMCAT_USER = "admin"
         TOMCAT_PASS = "admin123"
+        CURL_PATH = "C:\\Windows\\System32\\curl.exe"
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 echo "📦 Checking out source code..."
@@ -26,15 +25,20 @@ pipeline {
             }
         }
 
-       stage('Deploy') {
-    steps {
-        script {
-            echo "🚀 Deploying WAR to Apache Tomcat..."
-            // Replace with full path to curl.exe
-            bat '"C:\\Windows\\System32\\curl.exe" -u %TOMCAT_USER%:%TOMCAT_PASS% -T target/EduSparkCatalog.war "%TOMCAT_URL%/deploy?path=%DEPLOY_PATH%&update=true"'
+        stage('Deploy') {
+            steps {
+                script {
+                    echo "🚀 Deploying WAR to Apache Tomcat..."
+
+                    // Undeploy old WAR (ignore errors if not deployed yet)
+                    bat "\"${CURL_PATH}\" -u %TOMCAT_USER%:%TOMCAT_PASS% \"%TOMCAT_URL%/undeploy?path=%DEPLOY_PATH%\" || echo Old WAR not found"
+
+                    // Deploy new WAR
+                    bat "\"${CURL_PATH}\" -u %TOMCAT_USER%:%TOMCAT_PASS% -T target/EduSparkCatalog.war \"%TOMCAT_URL%/deploy?path=%DEPLOY_PATH%&update=true\""
+                }
+            }
         }
     }
-}
 
     post {
         success {

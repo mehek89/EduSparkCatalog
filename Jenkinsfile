@@ -22,7 +22,8 @@ pipeline {
         stage('Build') {
             steps {
                 // Clean and package WAR using Maven
-                bat "${MAVEN_HOME}\\bin\\mvn clean package"
+                bat "\"C:\\Program Files\\Maven\\maven-mvnd-1.0.3-windows-amd64\\mvn\\bin\\mvn\" clean package"
+
             }
         }
 

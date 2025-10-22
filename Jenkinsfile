@@ -19,14 +19,16 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                deploy adapters: [tomcat9(
-                    credentialsId: 'tomcatServer',  // your Jenkins credentials for Tomcat
-                    url: 'http://localhost:8081/manager/text',
-                    path: '/EduSparkCatalog'
-                )],
-                war: '**/target/EduSparkCatalog.war'
-            }
+    steps {
+        deploy adapters: [tomcat9(
+            credentialsId: 'tomcat-credentials', // matches Jenkins credentials ID
+            url: 'http://localhost:8081/manager/text',
+            path: '/EduSparkCatalog'
+        )],
+        war: '**/target/EduSparkCatalog.war'
+    }
+}
+
         }
     }
 

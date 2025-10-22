@@ -1,41 +1,42 @@
 pipeline {
     agent any
 
+    environment {
+        // ⚙️ Paths to tools
+        MAVEN_HOME = "C:\\Program Files\\Maven\\maven-mvnd-1.0.3-windows-amd64\\mvn"
+        TOMCAT_URL = "http://localhost:8081/manager/text"
+        DEPLOY_PATH = "/EduSparkCatalog"  // Change if you want another app name
+        TOMCAT_USER = "admin"
+        TOMCAT_PASS = "admin123"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
+                echo "📦 Checking out source code..."
                 git branch: 'main', url: 'https://github.com/mehek89/EduSparkCatalog.git'
             }
         }
 
         stage('Build') {
             steps {
-                bat '"C:\\Program Files\\Maven\\maven-mvnd-1.0.3-windows-amd64\\mvn\\bin\\mvn" clean package'
+                echo "🏗️ Building WAR package with Maven..."
+                bat "\"${MAVEN_HOME}\\bin\\mvn\" clean package"
             }
         }
 
         stage('Deploy') {
             steps {
                 script {
-                    // Check if curl exists before trying to deploy
-                    def curlCheck = bat(
-                        script: 'where curl',
-                        returnStatus: true
-                    )
+                    echo "🚀 Deploying WAR to Apache Tomcat..."
+                    // Check if curl exists
+                    bat 'where curl || echo ❌ curl not found'
 
-                    if (curlCheck != 0) {
-                        echo '❌ ERROR: curl command not found. Please install curl or add it to PATH.'
-                        error('Deployment stopped — curl missing.')
-                    } else {
-                        echo '✅ curl found — continuing deployment...'
-
-                        // Deploy WAR file to Tomcat
-                        bat """
-                        curl --upload-file "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\EduSparkCatalog-Pipeline\\target\\EduSparkCatalog.war" ^
-                        --user admin:admin123 ^
-                        "http://localhost:8081/manager/text/deploy?path=/EduSparkCatalog&update=true"
-                        """
-                    }
+                    // Deploy using curl
+                    bat """
+                    curl -u %TOMCAT_USER%:%TOMCAT_PASS% -T target/EduSparkCatalog.war "%TOMCAT_URL%/deploy?path=%DEPLOY_PATH%&update=true"
+                    """
                 }
             }
         }
@@ -43,10 +44,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build and Deployment Successful!'
+            echo "✅ Deployment Successful! Visit: http://localhost:8080%DEPLOY_PATH%"
         }
         failure {
-            echo '❌ Deployment Failed! Check Jenkins or Tomcat logs.'
+            echo "❌ Deployment Failed! Check Jenkins or Tomcat logs."
         }
     }
 }

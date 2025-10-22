@@ -26,21 +26,15 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    echo "🚀 Deploying WAR to Apache Tomcat..."
-                    // Check if curl exists
-                    bat 'where curl || echo ❌ curl not found'
-
-                    // Deploy using curl
-                    bat """
-                    curl -u %TOMCAT_USER%:%TOMCAT_PASS% -T target/EduSparkCatalog.war "%TOMCAT_URL%/deploy?path=%DEPLOY_PATH%&update=true"
-                    """
-                }
-            }
+       stage('Deploy') {
+    steps {
+        script {
+            echo "🚀 Deploying WAR to Apache Tomcat..."
+            // Replace with full path to curl.exe
+            bat '"C:\\Windows\\System32\\curl.exe" -u %TOMCAT_USER%:%TOMCAT_PASS% -T target/EduSparkCatalog.war "%TOMCAT_URL%/deploy?path=%DEPLOY_PATH%&update=true"'
         }
     }
+}
 
     post {
         success {

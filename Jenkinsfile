@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Maven tool configured in Jenkins
-        MAVEN_HOME = "C:\Program Files\Maven\maven-mvnd-1.0.3-windows-amd64\mvn" 
+        MAVEN_HOME = "C:\\Program Files\\Maven\\maven-mvnd-1.0.3-windows-amd64\\mvn"
         // Tomcat manager URL
         TOMCAT_URL = "http://localhost:8081/manager/text"
         // Tomcat credentials (user with manager-script role)
